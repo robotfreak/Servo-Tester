@@ -1,8 +1,8 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
-#include <s3servo.h>
-#include <Encoder.h>
+#include <s3servo.h>       // https://github.com/Rob58329/ESP32S3servo.git
+#include <Encoder.h>       // https://github.com/PaulStoffregen/Encoder
 
 #define SDA0_Pin 6   // select ESP32  I2C pins
 #define SCL0_Pin 5
@@ -22,7 +22,10 @@ Adafruit_SH1106G display = Adafruit_SH1106G(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, 
 s3servo servos[NUM_SERVOS];
 int servoPins[NUM_SERVOS] = {1,2,3,4};
 
+int servoMode = 0;  // degree or microseconds
+
 int pos = 90;
+int pos_us = 1500;
 
 // Change these two numbers to the pins connected to your encoder.
 //   Best Performance: both pins have interrupt capability
@@ -40,9 +43,9 @@ int btn;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial0.begin(9600);
+  Serial.begin(9600);
 //  Serial.begin(9600, SERIAL_8N1, RXD1, TXD1);
-  Serial0.println("Servo Tester v0.1");
+  Serial.println("Servo Tester v0.1");
 
   pinMode(encBtnPin, INPUT_PULLUP);
   btnState = 0;
@@ -76,21 +79,27 @@ void loop() {
   long newPosition = myEnc.read();
   if (newPosition != oldPosition) {
     oldPosition = newPosition;
-    Serial0.print("Enc: ");
-    Serial0.println(newPosition);
+    Serial.print("Enc: ");
+    Serial.println(newPosition);
     if (newPosition > 0 && pos < 180)
       pos ++;
     else if (newPosition < 0 && pos > 0)
       pos--;
+    pos_us = map(pos, 0, 180, 500, 2000);
     myEnc.write(0);
-    Serial0.print("Pos: ");
-    Serial0.println(pos);
+    Serial.print("Pos: ");
+    Serial.print(pos);
+    Serial.print(", ");
+    Serial.println(pos_us);
     display.clearDisplay();
     display.setCursor(40, 40);
     display.setTextSize(2);
-    display.print("   ");
+    display.print("    ");
     display.setCursor(40, 40);
-    display.print(pos);
+    if (servoMode == 0)
+      display.print(pos);
+    else  
+      display.print(pos_us);
     //display.setTextColor(SH110X_BLACK, SH110X_WHITE); // 'inverted' text
     display.display();
 
@@ -101,14 +110,24 @@ void loop() {
     Serial0.print("Btn: ");
     Serial0.println(btnState);
     pos = 90;
+    pos_us = map(pos, 0, 180, 1000, 2000);
     Serial.print("Pos: ");
-    Serial.println(pos);
+    Serial.print(pos);
+    Serial.print(", ");
+    Serial.println(pos_us);
     display.clearDisplay();
     display.setCursor(40, 40);
     display.setTextSize(2);
-    display.print("   ");
+    display.print("    ");
     display.setCursor(40, 40);
-    display.println(pos);
+    if (servoMode == 0) {
+      display.print(pos_us);
+      servoMode = 1;
+    }
+    else {  
+      display.print(pos);
+      servoMode = 0;
+    }
     //display.setTextColor(SH110X_BLACK, SH110X_WHITE); // 'inverted' text
     display.display();
   }
