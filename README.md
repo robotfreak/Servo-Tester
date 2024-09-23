@@ -1,4 +1,8 @@
-ESP32-S3 Servo Tester
+# Introduction
+
+An ESP32-S3 based Servo Tester.
+
+![alt text](images/servo-tester.jpeg)
 
 
 # Hardware
@@ -7,6 +11,8 @@ ESP32-S3 Servo Tester
 * 1.3" OLED Display SSH1106
 * Rotary Encoder with button
 * 5 x 3x1 pin header 
+
+![alt text](images/servo-tester-pcb.jpeg)
 
 
 # Software
