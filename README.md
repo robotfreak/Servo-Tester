@@ -3,7 +3,7 @@ ESP32-S3 Servo Tester
 
 # Hardware
 
-* Waveshare ESP-S3 Zero
+* Waveshare ESP32-S3 Zero
 * 1.3" OLED Display SSH1106
 * Rotary Encoder with button
 * 5 x 3x1 pin header 
